@@ -1,0 +1,9 @@
+{
+    "name": "WETH",
+    "cToken": "0x899A2189fB04B3Ed69B568f31D6505340A8910EB",
+    "rewardToken": "0xf8cb9f1d136ff4c883320b5b4fa80048b888f459",
+    "rewardRate": "10 ** 18",
+    "pointRate": "10 ** 18",
+    "pointProportion": "2 * 10 ** 16",
+    "weight": 100
+}
