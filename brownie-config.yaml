@@ -1,10 +1,22 @@
 reports:
   exclude_paths:
     - contracts/mocks/*.*
-
 networks:
   development:
     cmd_settings:
       accounts: 10
       chain_id: 1337
 
+dependencies:
+  - OpenZeppelin/openzeppelin-contracts@4.8.3
+  - OpenZeppelin/openzeppelin-contracts-upgradeable@4.8.3
+compiler:
+    evm_version: null
+    solc:
+        version: 0.8.17
+        optimizer:
+            enabled: true
+            runs: 200
+        remappings:
+            - '@openzeppelin/contracts=OpenZeppelin/openzeppelin-contracts@4.8.3/contracts'
+            - '@openzeppelin/contracts-upgradeable=OpenZeppelin/openzeppelin-contracts-upgradeable@4.8.3/contracts'
