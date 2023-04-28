@@ -4,20 +4,20 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IComptroller.sol";
-import "./EsToken.sol";
+import "./interfaces/IEsToken.sol";
 
 contract EsTokenTool is Ownable {
     using Address for address;
 
     IComptroller public comptroller;
-    EsToken public esToken;
+    IEsToken public esToken;
 
     constructor(address _comptroller, address _esToken) {
         require(_comptroller.isContract(), "comptroller is not contract");
         require(_esToken.isContract(), "estoken is not contract");
 
         comptroller = IComptroller(_comptroller);
-        esToken = EsToken(_esToken);
+        esToken = IEsToken(_esToken);
     }
 
     function stake() external {

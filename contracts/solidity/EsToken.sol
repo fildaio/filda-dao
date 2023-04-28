@@ -77,6 +77,8 @@ contract EsToken is ERC20Upgradeable, ReentrancyGuardUpgradeable {
     }
 
     function _stake_for(address _account, uint256 _amount) internal {
+        require(_amount > 0, "can not stake zero");
+
         _burn(_account, _amount);
 
         IERC20Upgradeable(underlying).approve(address(distribution), _amount);
@@ -92,6 +94,8 @@ contract EsToken is ERC20Upgradeable, ReentrancyGuardUpgradeable {
     }
 
     function _claim_for(address _account, uint256 _amount) internal {
+        require(_amount > 0, "can not claim zero");
+
         _burn(_account, _amount);
 
         uint256 underlyingAmount = _amount.div(2);
