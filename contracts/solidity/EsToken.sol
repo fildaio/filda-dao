@@ -3,12 +3,13 @@ pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 import "./interfaces/IMultiFeeDistribution.sol";
 
-contract EsToken is ERC20Upgradeable {
+contract EsToken is ERC20Upgradeable, ReentrancyGuardUpgradeable {
     using AddressUpgradeable for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeMathUpgradeable for uint256;
@@ -38,7 +39,7 @@ contract EsToken is ERC20Upgradeable {
     }
 
     function initialize(address _underlying, address _admin, address _distribution, address _penaltyReceiver) public initializer {
-        __ERC20_init("ES FilDA TOKEN", "esFilDA");
+        __ERC20_init("x FilDA on BTTC", "xFilDA");
 
         require(_underlying.isContract(), "underlying token must be contract");
         require(_distribution.isContract(), "distribution must be contract");
@@ -76,21 +77,25 @@ contract EsToken is ERC20Upgradeable {
     }
 
     function _stake_for(address _account, uint256 _amount) internal {
+        require(_amount > 0, "can not stake zero");
+
         _burn(_account, _amount);
 
         IERC20Upgradeable(underlying).approve(address(distribution), _amount);
         distribution.stake(_amount, true, _account);
     }
 
-    function stake(uint256 _amount) external {
+    function stake(uint256 _amount) external nonReentrant {
         _stake_for(msg.sender, _amount);
     }
 
-    function stake_for(address _account, uint256 _amount) external onlyHandler {
+    function stake_for(address _account, uint256 _amount) external onlyHandler nonReentrant {
         _stake_for(_account, _amount);
     }
 
     function _claim_for(address _account, uint256 _amount) internal {
+        require(_amount > 0, "can not claim zero");
+
         _burn(_account, _amount);
 
         uint256 underlyingAmount = _amount.div(2);
@@ -103,11 +108,11 @@ contract EsToken is ERC20Upgradeable {
     }
 
     // claim will
-    function claim(uint256 _amount) external {
+    function claim(uint256 _amount) external nonReentrant {
         _claim_for(msg.sender, _amount);
     }
 
-    function claim_for(address _account, uint256 _amount) external onlyHandler {
+    function claim_for(address _account, uint256 _amount) external onlyHandler nonReentrant {
         _claim_for(_account, _amount);
     }
 }
