@@ -12,11 +12,12 @@ contract EsTokenTool is Ownable {
     IComptroller public comptroller;
     EsToken public esToken;
 
-    constructor(address _comptroller) {
+    constructor(address _comptroller, address _esToken) {
         require(_comptroller.isContract(), "comptroller is not contract");
+        require(_esToken.isContract(), "estoken is not contract");
 
         comptroller = IComptroller(_comptroller);
-        esToken = EsToken(comptroller.getCompAddress());
+        esToken = EsToken(_esToken);
     }
 
     function stake() external {
