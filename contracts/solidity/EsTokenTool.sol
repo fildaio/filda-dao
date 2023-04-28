@@ -19,20 +19,18 @@ contract EsTokenTool is Ownable {
         esToken = EsToken(comptroller.getCompAddress());
     }
 
-    function stake(uint256 _amount) external {
+    function stake() external {
         comptroller.claimComp(msg.sender);
         uint256 bal = esToken.balanceOf(msg.sender);
-        uint amount = _amount > bal ? bal : _amount;
 
-        esToken.stake_for(msg.sender, amount);
+        esToken.stake_for(msg.sender, bal);
     }
 
-    function claim(uint256 _amount) external {
+    function claim() external {
         comptroller.claimComp(msg.sender);
         uint256 bal = esToken.balanceOf(msg.sender);
-        uint amount = _amount > bal ? bal : _amount;
 
-        esToken.claim_for(msg.sender, amount);
+        esToken.claim_for(msg.sender, bal);
     }
 
 }

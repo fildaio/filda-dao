@@ -18,5 +18,5 @@ compiler:
             enabled: true
             runs: 200
         remappings:
-            - '@openzeppelin=OpenZeppelin/openzeppelin-contracts@4.8.3'
-            - '@openzeppelin-upgradeable=OpenZeppelin/openzeppelin-contracts-upgradeable@4.8.3'
+            - '@openzeppelin/contracts=OpenZeppelin/openzeppelin-contracts@4.8.3/contracts'
+            - '@openzeppelin/contracts-upgradeable=OpenZeppelin/openzeppelin-contracts-upgradeable@4.8.3/contracts'
