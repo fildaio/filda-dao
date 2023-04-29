@@ -40,7 +40,7 @@ contract EsToken is ERC20CappedUpgradeable, ReentrancyGuardUpgradeable {
 
     function initialize(address _underlying, address _admin, address _distribution, address _penaltyReceiver, uint256 cap_) public initializer {
         __ERC20Capped_init(cap_);
-        __ERC20_init("x FilDA on BTTC", "xFilDA");
+        __ERC20_init("xFilDA on BTTC", "xFilDA");
 
         require(_underlying.isContract(), "underlying token must be contract");
         require(_distribution.isContract(), "distribution must be contract");
