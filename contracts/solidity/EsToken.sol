@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20CappedUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
@@ -9,7 +9,7 @@ import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 import "./interfaces/IMultiFeeDistribution.sol";
 
-contract EsToken is ERC20Upgradeable, ReentrancyGuardUpgradeable {
+contract EsToken is ERC20CappedUpgradeable, ReentrancyGuardUpgradeable {
     using AddressUpgradeable for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeMathUpgradeable for uint256;
@@ -38,7 +38,8 @@ contract EsToken is ERC20Upgradeable, ReentrancyGuardUpgradeable {
         _;
     }
 
-    function initialize(address _underlying, address _admin, address _distribution, address _penaltyReceiver) public initializer {
+    function initialize(address _underlying, address _admin, address _distribution, address _penaltyReceiver, uint256 cap_) public initializer {
+        __ERC20Capped_init(cap_);
         __ERC20_init("x FilDA on BTTC", "xFilDA");
 
         require(_underlying.isContract(), "underlying token must be contract");
