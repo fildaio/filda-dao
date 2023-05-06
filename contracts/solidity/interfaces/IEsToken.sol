@@ -7,4 +7,6 @@ interface IEsToken {
     function stake_for(address _account, uint256 _amount) external;
 
     function balanceOf(address _account) view external returns (uint256);
+
+    function depositToVe_for(address _account, uint256 _amount) external;
 }
