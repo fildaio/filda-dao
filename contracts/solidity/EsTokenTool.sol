@@ -34,4 +34,10 @@ contract EsTokenTool is Ownable {
         esToken.claim_for(msg.sender, bal);
     }
 
+    function depositToVe() external {
+        comptroller.claimComp(msg.sender);
+        uint256 bal = esToken.balanceOf(msg.sender);
+
+        esToken.depositToVe_for(msg.sender, bal);
+    }
 }

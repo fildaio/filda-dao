@@ -2,6 +2,7 @@ import pytest
 from brownie import (
     compile_source,
     convert,
+    Contract
 )
 from brownie_tokens import ERC20
 
@@ -48,6 +49,15 @@ def receiver(accounts):
     yield accounts.at("0x0000000000000000000000000000000000031337", True)
 
 
+@pytest.fixture(scope="session")
+def penaltyReceiver(accounts):
+    yield accounts[4]
+
+@pytest.fixture(scope="session")
+def admin(accounts):
+    yield accounts[5]
+
+
 # core contracts
 
 
@@ -57,9 +67,24 @@ def token(ERC20Impl, accounts):
 
 
 @pytest.fixture(scope="module")
-def voting_escrow(VotingEscrow, accounts, token):
+def distribution(MultiFeeDistribution, accounts, token):
+    yield MultiFeeDistribution.deploy(token, {"from": accounts[0]})
+
+@pytest.fixture(scope="module")
+def esToken(EsToken, EsTokenProxy, distribution,  token, accounts, admin, penaltyReceiver):
+    implement = EsToken.deploy({"from": accounts[0]})
+    proxy = EsTokenProxy.deploy(implement, accounts[0], b'', {"from": accounts[0]})
+
+    esToken = Contract.from_abi("EsToken", proxy, EsToken.abi)
+    esToken.initialize(token, admin, distribution, penaltyReceiver, 10 ** 24 * 5, {"from": admin})
+
+    yield esToken
+
+
+@pytest.fixture(scope="module")
+def voting_escrow(VotingEscrow, accounts, token, esToken):
     yield VotingEscrow.deploy(
-        token, "Voting-escrowed FilDA", "veFilDA", "veFilDA_0.99", {"from": accounts[0]}
+        token, "Voting-escrowed FilDA", "veFilDA", "veFilDA_0.99", esToken, {"from": accounts[0]}
     )
 
 
@@ -185,3 +210,19 @@ def mock_lp_token_v2(MockCErc20V2, coin_deposit, accounts, gauge_controller):  #
 @pytest.fixture(scope="module")
 def reward_helper(RewardHelper, minter, accounts):
     yield RewardHelper.deploy(minter, {"from": accounts[0]})
+
+
+
+# solidity testing contracts
+
+@pytest.fixture(scope="module")
+def comptroller(MockComptroller, accounts, esToken):
+    yield MockComptroller.deploy(esToken, {"from": accounts[0]})
+
+@pytest.fixture(scope="module")
+def esTokenTool(EsTokenTool, accounts, comptroller, esToken, admin):
+    tool = EsTokenTool.deploy(comptroller, esToken, {"from": accounts[0]})
+    esToken.setHandler(tool, {"from": admin})
+
+    yield tool
+
