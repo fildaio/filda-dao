@@ -47,9 +47,9 @@ def development():
 def deploy_part_one(admin, token, confs=1, deployments_json=None):
     voting_escrow = VotingEscrow.deploy(
         token,
-        "Vote-escrowed TOP",
-        "veTOP",
-        "veTOP_1.0.0",
+        "Vote-escrowed FilDA",
+        "veFilDA",
+        "veFilDA_1.0.0",
         {"from": admin, "required_confs": confs},
     )
     deployments = {
