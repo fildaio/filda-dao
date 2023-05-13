@@ -44,12 +44,13 @@ def development():
     deploy_part_two(accounts[0], token, voting_escrow, policy_reward, gague_types, pools)
 
 
-def deploy_part_one(admin, token, confs=1, deployments_json=None):
+def deploy_part_one(admin, token, xToken, confs=1, deployments_json=None):
     voting_escrow = VotingEscrow.deploy(
         token,
         "Vote-escrowed FilDA",
         "veFilDA",
         "veFilDA_1.0.0",
+        xToken,
         {"from": admin, "required_confs": confs},
     )
     deployments = {

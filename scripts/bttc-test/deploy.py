@@ -10,6 +10,7 @@ DEPLOYMENTS_JSON = "scripts/" + network.main.show_active() + "/deployments.json"
 GAUGE_JSON = "scripts/" + network.main.show_active() + "/gauge.json"
 
 DAO_TOKEN = '0x56c0fa757820c2d9df35cf2874f3268fe717e92f'
+xDAO_TOKEN = '0xF1776f8C752B2f897970F27264A1bff3b1597e12'
 POLICYMAKER_REWARD = 21333.2 * 10 ** 18
 
 # name, type weight
@@ -26,7 +27,7 @@ POOL_TOKENS = {
 def deploy():
     print(DEPLOYMENTS_JSON)
     admin = config.get_live_admin()
-    voting_escrow = dao.deploy_part_one(admin, DAO_TOKEN, config.REQUIRED_CONFIRMATIONS, DEPLOYMENTS_JSON)
+    voting_escrow = dao.deploy_part_one(admin, DAO_TOKEN, xDAO_TOKEN, config.REQUIRED_CONFIRMATIONS, DEPLOYMENTS_JSON)
 
     dao.deploy_part_two(
         admin, DAO_TOKEN, voting_escrow, POLICYMAKER_REWARD, GAUGE_TYPES, POOL_TOKENS, config.REQUIRED_CONFIRMATIONS, DEPLOYMENTS_JSON
