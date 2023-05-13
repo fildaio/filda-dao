@@ -8,6 +8,7 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 import "./interfaces/IMultiFeeDistribution.sol";
+import "./interfaces/IVotingEscrow.sol";
 
 contract EsToken is ERC20CappedUpgradeable, ReentrancyGuardUpgradeable {
     using AddressUpgradeable for address;
@@ -22,11 +23,15 @@ contract EsToken is ERC20CappedUpgradeable, ReentrancyGuardUpgradeable {
 
     address public handler;
 
+    IVotingEscrow public veToken;
+
     event AdminChanged(address indexed admin);
     event PenaltyReceiverChanged(address indexed receiver);
     event HandlerChanged(address indexed handler);
     event Claimed(address indexed account, uint256 burnedAmount, uint256 receivedAmount);
     event PenaltyTransfered(address indexed receiver, uint256 amount);
+    event VeTokenChanged(address indexed veToken);
+    event Unlocked(address indexed account, uint256 amount);
 
     modifier onlyAdmin {
         require(msg.sender == admin, "only admin");
@@ -35,6 +40,12 @@ contract EsToken is ERC20CappedUpgradeable, ReentrancyGuardUpgradeable {
 
     modifier onlyHandler {
         require(msg.sender == handler, "only handler");
+        _;
+    }
+
+    modifier onlyVeToken {
+        require(address(veToken) != address(0), "set vetoken first");
+        require(msg.sender == address(veToken), "only VeToken");
         _;
     }
 
@@ -115,5 +126,38 @@ contract EsToken is ERC20CappedUpgradeable, ReentrancyGuardUpgradeable {
 
     function claim_for(address _account, uint256 _amount) external onlyHandler nonReentrant {
         _claim_for(_account, _amount);
+    }
+
+    function setVeToken(address _veToken) external onlyAdmin {
+        veToken = IVotingEscrow(_veToken);
+        emit VeTokenChanged(_veToken);
+    }
+
+    function _depositToVe_for(address _account, uint256 _amount) internal {
+        require(_amount > 0, "can not deposit zero");
+
+        (int128 amount, ) = veToken.locked(_account);
+        require(amount > 0, "create lock first");
+
+        _unlock(_account, _amount);
+        veToken.deposit_for(_account, _amount);
+    }
+
+    function depositToVe_for(address _account, uint256 _amount) external onlyHandler nonReentrant {
+        _depositToVe_for(_account, _amount);
+    }
+
+    function depositToVe(uint256 _amount) external {
+        _depositToVe_for(msg.sender, _amount);
+    }
+
+    function _unlock(address _account, uint256 _amount) internal {
+        _burn(_account, _amount);
+        IERC20Upgradeable(underlying).safeTransfer(_account, _amount);
+    }
+
+    function unlock(address _account, uint256 _amount) external onlyVeToken {
+        _unlock(_account, _amount);
+        emit Unlocked(_account, _amount);
     }
 }

@@ -1,5 +1,5 @@
 import brownie
-from brownie import chain, history
+from brownie import ZERO_ADDRESS, chain, history
 from brownie.test import strategy
 from brownie_tokens import ERC20
 
@@ -190,7 +190,7 @@ class StateMachine:
 def test_state_machine(state_machine, accounts, VotingEscrow):
     token = ERC20("", "", 18)
     voting_escrow = VotingEscrow.deploy(
-        token, "Voting-escrowed TOP", "veTOP", "veTOP_0.99", {"from": accounts[0]}
+        token, "Voting-escrowed TOP", "veTOP", "veTOP_0.99", ZERO_ADDRESS, {"from": accounts[0]}
     )
 
     state_machine(StateMachine, accounts[:10], token, voting_escrow, settings={"max_examples": 30})
