@@ -91,6 +91,30 @@ brownie test tests/integration
 
 4. Once deployment done the new gauge address added to `deployment.json` file.
 
+### 4. deploy EsToken and proxy
+
+### 5. Config EsToken and VotingEscrow
+
+1. Set EsToken vetoken address
+    ```bash
+        function setVeToken(address _veToken) external onlyAdmin
+    ```
+
+2. Add EsTokenProxy to VotingEscrow deposit whitelist.
+    Call VotingEscrow change_deposit_whitelist, set EsTokenProxy address true.
+    ```bash
+        def change_deposit_whitelist(_addr: address, _enable: bool)
+    ```
+
+### 6. Change EsTokenTool
+
+    Call EsToken setHandler.
+
+```bash
+    def change_deposit_whitelist(_addr: address, _enable: bool)
+```
+
+
 ## License
 
 This project is licensed under the [MIT](LICENSE) license.
