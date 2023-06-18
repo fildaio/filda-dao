@@ -111,7 +111,7 @@ brownie test tests/integration
     Call EsToken setHandler.
 
 ```bash
-    def change_deposit_whitelist(_addr: address, _enable: bool)
+    function setHandler(address _handler) external onlyAdmin
 ```
 
 
